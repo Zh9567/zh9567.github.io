@@ -12,15 +12,16 @@
             font-family: Arial, sans-serif;
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            min-height: 100vh;
         }
 
         header {
-            display: flex;
-            align-items: center;
+            position: sticky;
+            top: 0;
             background-color: #333;
             color: white;
             padding: 10px 20px;
+            z-index: 1000;
         }
 
         header a {
@@ -35,14 +36,16 @@
             margin-right: 10px;
         }
 
-        #map {
-            flex-grow: 1;
-        }
-
         .content {
+            flex-grow: 1;
             padding: 20px;
             background-color: #f9f9f9;
             color: #333;
+        }
+
+        #map {
+            flex-grow: 1;
+            height: 400px; /* Example height for the map */
         }
 
         footer {
@@ -59,18 +62,19 @@
             font-size: 1.2em;
         }
 
-        footer a:hover {
-            text-decoration: underline;
+        footer p {
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <header>
         <a href="index.html">
-            <img src="https://zh9567.github.io/zh9567mapping_logo.png" alt="Zh9567 Logo" />
+            <img src="https://zh9567.github.io/zh9567mapping_logo.png" alt="Zh9567 Logo">
             <h1>Zh9567 Mapping</h1>
         </a>
     </header>
+
     <div class="content">
         <h2>Welcome to Zh9567 Mapping</h2>
         <p>
@@ -88,8 +92,15 @@
         <p>
             Maps are more than just lines and symbols; they tell stories. We encourage people to explore their neighborhoods through maps. Want to find the best local eateries, hidden parks, or historical sites? Our maps provide a window into the rich tapestry of each locality. Whether you’re a traveler or a resident, let our maps guide your exploration.
         </p>
+        <div class="row text-center">
+            <div class="col offset-lg-0 text-center"><a href="index.html"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Emblem-question-red.svg/1024px-Emblem-question-red.svg.png" width="128" height="128">
+                    <h3 style="color: var(--bs-body-bg);">Coming Soon</h3>
+                    <p style="color: var(--bs-body-bg);">stay tuned for our work</p>
+                </a></div>
+        </div>
+        <div id="map"></div>
     </div>
-    <div id="map"></div>
+
     <footer>
         <a href="https://www.facebook.com" target="_blank">Facebook</a>
         <a href="https://www.instagram.com" target="_blank">Instagram</a>
