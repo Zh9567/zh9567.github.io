@@ -7,16 +7,96 @@
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        header {
+            display: flex;
+            align-items: center;
+            background-color: #333;
+            color: white;
+            padding: 10px 20px;
+        }
+
+        header a {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: white;
+        }
+
+        header img {
+            height: 40px;
+            margin-right: 10px;
+        }
+
         #map {
-            height: 100vh; /* Fullscreen map */
+            flex-grow: 1;
+        }
+
+        .content {
+            padding: 20px;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 10px;
+        }
+
+        footer a {
+            color: white;
+            margin: 0 10px;
+            text-decoration: none;
+            font-size: 1.2em;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <img src="zh9567mapping_logo.png" style="width:500px;height:500px;">
-    <h1>Zh9567 Mapping</h1>
-    <p><b>THIS SITE IS UNDER DEVELOPMENT AND TESTING</b></p>
+    <header>
+        <a href="index.html">
+            <img src="https://zh9567.github.io/zh9567mapping_logo.png" alt="Zh9567 Logo" />
+            <h1>Zh9567 Mapping</h1>
+        </a>
+    </header>
+    <div class="content">
+        <h2>Welcome to Zh9567 Mapping</h2>
+        <p>
+            <b>THIS SITE IS UNDER DEVELOPMENT AND TESTING</b>
+        </p>
+        <p>
+            At the core of our mission is the art of mapmaking. We believe that maps are powerful tools for understanding our surroundings, connecting communities, and visualizing data. Whether it’s a simple neighborhood map or a detailed city layout, we strive to create accurate and informative representations.
+        </p>
+        <p>
+            As avid contributors to OpenStreetMap, we actively participate in editing and improving this open-source mapping platform. OSM allows us to collaboratively build and maintain a comprehensive map of the world, free from proprietary restrictions. Our edits range from adding missing roads and landmarks to updating business information and verifying geographical features.
+        </p>
+        <p>
+            To ensure the accuracy of our maps, we hit the streets! Armed with GPS devices, notebooks, and a keen eye, our team conducts local surveys. We document everything—from footpaths and street names to public facilities and natural landmarks. By doing so, we contribute valuable data to OSM and help keep our maps up-to-date.
+        </p>
+        <p>
+            Maps are more than just lines and symbols; they tell stories. We encourage people to explore their neighborhoods through maps. Want to find the best local eateries, hidden parks, or historical sites? Our maps provide a window into the rich tapestry of each locality. Whether you’re a traveler or a resident, let our maps guide your exploration.
+        </p>
+    </div>
     <div id="map"></div>
+    <footer>
+        <a href="https://www.facebook.com" target="_blank">Facebook</a>
+        <a href="https://www.instagram.com" target="_blank">Instagram</a>
+        <a href="https://www.youtube.com" target="_blank">YouTube</a>
+        <a href="https://www.twitter.com" target="_blank">Twitter</a>
+        <p>© Zh9567 Mapping 2025</p>
+    </footer>
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -33,23 +113,6 @@
         // Add a marker
         const marker = L.marker([3.1390, 101.6869]).addTo(map);
         marker.bindPopup("<b>Welcome to Zh9567 Mapping!</b><br>This is Kuala Lumpur.").openPopup();
-
-        // Add a circle (for demonstration)
-        const circle = L.circle([3.14, 101.7], {
-            color: 'blue',
-            fillColor: '#30f',
-            fillOpacity: 0.4,
-            radius: 500
-        }).addTo(map);
-        circle.bindPopup("This is a circle marker.");
-
-        // Add a polygon (for demonstration)
-        const polygon = L.polygon([
-            [3.1357, 101.6880],
-            [3.1397, 101.6864],
-            [3.1387, 101.6899]
-        ]).addTo(map);
-        polygon.bindPopup("This is a polygon.");
     </script>
 </body>
 </html>
