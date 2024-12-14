@@ -90,22 +90,33 @@
                 const blob = await response.blob();
                 const zip = await JSZip.loadAsync(blob);
 
-                const stopsFile = await zip.file("stops.txt").async("string");
-                const routesFile = await zip.file("routes.txt").async("string");
-                const stopTimesFile = await zip.file("stop_times.txt").async("string");
+                const tripsFile = await zip.file("trips.txt").async("string");
+                const trips = Papa.parse(tripsFile, { header: true }).data;
 
+                const stopsFile = await zip.file("stops.txt").async("string");
                 const stops = Papa.parse(stopsFile, { header: true }).data;
+
+                const routesFile = await zip.file("routes.txt").async("string");
                 const routes = Papa.parse(routesFile, { header: true }).data;
+
+                const stopTimesFile = await zip.file("stop_times.txt").async("string");
                 const stopTimes = Papa.parse(stopTimesFile, { header: true }).data;
 
                 // Create a mapping of route_id to route details
                 const routeMap = new Map();
                 routes.forEach(route => {
-                    routeMap.set(route.route_id, {
-                        agency_id: route.agency_id,
-                        route_short_name: route.route_short_name,
-                        route_long_name: route.route_long_name
-                    });
+                routeMap.set(route.route_id, {
+                    agency_id: route.agency_id,
+                    route_short_name: route.route_short_name,
+                    route_long_name: route.route_long_name,
+
+                });
+            });
+
+            // Create a mapping of trip_id to route_id from trips.txt
+                const tripToRouteMap = new Map();
+                trips.forEach(trip => {
+                    tripToRouteMap.set(trip.trip_id, trip.route_id);
                 });
 
                 // Create a mapping of stop_id to route details
@@ -114,23 +125,20 @@
                     const stopId = stopTime.stop_id;
                     const tripId = stopTime.trip_id;
 
-                    // Extract route_id from trip_id (assumes trip_id format contains route_id)
-                    const routeId = tripId.split('_')[1]; // Adjust index based on actual format
-
+                    const routeId = tripToRouteMap.get(tripId);
                     const routeDetails = routeMap.get(routeId);
 
                     if (routeDetails) {
                         if (!stopRoutes.has(stopId)) {
                             stopRoutes.set(stopId, []);
-                        }
-
-                        // Avoid duplicate entries
-                        const routesForStop = stopRoutes.get(stopId);
-                        if (!routesForStop.some(r => r.route_short_name === routeDetails.route_short_name)) {
-                            routesForStop.push(routeDetails);
-                        }
                     }
-                });
+
+                    const routesForStop = stopRoutes.get(stopId);
+                    if (!routesForStop.some(r => r.route_short_name === routeDetails.route_short_name)) {
+                        routesForStop.push(routeDetails);
+                    }
+                }
+            });
 
                 const markers = [];
 
@@ -147,6 +155,8 @@
                         const routes = stopRoutes.get(stop.stop_id) || [];
                         routes.sort((a, b) => a.route_short_name.localeCompare(b.route_short_name));
 
+                        const stopDescription = stop.stop_desc ? `<br>${stop.stop_desc}` : '';
+
                         if (routes.length === 0) {
                             return `<div class="popup-content">
                                 <strong>${stop.stop_name}</strong>
@@ -155,7 +165,7 @@
                         }
 
                         return `<div class="popup-content">
-                            <p align="center"><strong>${stop.stop_name}</strong><br>${stop.stop_desc}</p>
+                            <p align="center"><strong>${stop.stop_name}</strong>${stopDescription}</p>
                             <p>Routes served:
                             <ul>
                                 ${routes.map(route => `<li><strong>${route.route_short_name}</strong>: ${route.route_long_name}</li>`).join('')}
