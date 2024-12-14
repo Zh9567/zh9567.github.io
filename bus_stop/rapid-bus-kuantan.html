@@ -6,6 +6,7 @@
     <title>Bus Stops and Routes</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://zh9567.github.io/styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-gesture-handling/dist/leaflet-gesture-handling.min.css">
     <style>
         #map {
             flex-grow: 1;
@@ -37,17 +38,21 @@
             This is a map of bus stops served by Rapid Kuantan buses. Click on a bus stop to show the routes served.
         </p>
         <p>
-            <a href="https://zh9567.github.io/bus_stop/rapid-bus-kl/">Rapid KL Bus</a>
-            <a href="https://zh9567.github.io/bus_stop/rapid-bus-mrtfeeder/">MRT Feeder Bus</a>
-            <a href="https://zh9567.github.io/bus_stop/rapid-bus-penang/">Rapid Penang Bus</a>
-            <a href="https://zh9567.github.io/bus_stop/mybas-johor/">Causeway Link Bus</a>
+            View other locations:
+            <ul>
+                <li><a href="https://zh9567.github.io/bus_stop/rapid-bus-kl.html">Rapid KL Bus</a></li>
+                <li><a href="https://zh9567.github.io/bus_stop/rapid-bus-mrtfeeder.html">MRT Feeder Bus</a></li>
+                <li><a href="https://zh9567.github.io/bus_stop/rapid-bus-penang.html">Rapid Penang Bus</a></li>
+                <li><a href="https://zh9567.github.io/bus_stop/mybas-johor.html">Causeway Link Bus</a></li>
+            </ul>
         </p>
     </div>
     <div id="map"></div>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-gesture-handling"></script>
     <script>
         // Initialize the map
-        const map = L.map('map').setView([3.8168, 103.3317], 16); // Default to zoom level 16
+        const map = L.map('map',{gestureHandling: true}).setView([3.8168, 103.3317], 16); // Default to zoom level 16
 
         // Add OpenStreetMap tile layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
