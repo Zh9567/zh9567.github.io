@@ -134,7 +134,7 @@ const fetchBusStops = async () => {
                     }
 
                     const routesForStop = stopRoutes.get(stopId);
-                    if (!routesForStop.some(r => r.route_short_name === routeDetails.route_short_name)) {
+                    if (!routesForStop.some(r => r.route_long_name === routeDetails.route_long_name)) {
                         routesForStop.push(routeDetails);
                     }
                 }
@@ -154,7 +154,7 @@ const fetchBusStops = async () => {
 
                     marker.bindPopup(() => {
                         const routes = stopRoutes.get(stop.stop_id) || [];
-                        routes.sort((a, b) => a.route_short_name.localeCompare(b.route_short_name));
+                        routes.sort((a, b) => a.route_long_name.localeCompare(b.route_long_name));
 
                         const stopDescription = stop.stop_desc ? `<br>${stop.stop_desc}` : '';
 
@@ -169,7 +169,7 @@ const fetchBusStops = async () => {
                             <p align="center"><strong>${stop.stop_name}</strong>${stopDescription}</p>
                             <p>Routes served:
                             <ul>
-                                ${routes.map(route => `<li><strong>${route.route_short_name}</strong>: ${route.route_long_name}</li>`).join('')}
+                                ${routes.map(route => `<li><strong>${route.route_long_name}</strong>: ${route.route_long_name}</li>`).join('')}
                             </ul></p>
                         </div>`;
                     });
