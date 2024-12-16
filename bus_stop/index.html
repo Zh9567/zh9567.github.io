@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rapid KL bus stops</title>
+    <title>Bus stop viewer</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://zh9567.github.io/styles.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet-gesture-handling/dist/leaflet-gesture-handling.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
     <style>
         #map {
             flex-grow: 1;
@@ -26,7 +28,7 @@
         </a>
     </header>
     <div class="content">
-        <h1>Bus stop map</h1>
+        <h1>Bus stop viewer</h1>
         <p>
             This is a map of all bus stops. Select a service to view routes served by a bus stop.
         </p>
