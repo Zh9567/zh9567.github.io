@@ -166,7 +166,7 @@ const fetchBusStops = async () => {
                         }
 
                         return `<div class="popup-content">
-                            <p align="center"><strong>${stop.stop_name}</strong>${stopDescription}</p>
+                            <p align="center"><strong>${stop.stop_name}</strong><small>${stopDescription}</small></p>
                             <p>Routes served:
                             <ul>
                                 ${routes.map(route => `<li><strong>${route.route_long_name}</strong>: ${route.route_long_name}</li>`).join('')}
