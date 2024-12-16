@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapid KL bus stops</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://zh9567.github.io/styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-gesture-handling/dist/leaflet-gesture-handling.min.css">
+    <style>
+        #map {
+            flex-grow: 1;
+            height: 100vh;
+        }
+        .popup-content {
+            font-size: 12px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <a href="https://zh9567.github.io/">
+            <img src="https://zh9567.github.io/zh9567mapping_logo.png" alt="Zh9567 Logo">
+            <h1>Zh9567 Mapping</h1>
+        </a>
+    </header>
+    <div class="content">
+        <h1>Bus stop map</h1>
+        <p>
+            This is a map of all bus stops. Select a service to view routes served by a bus stop.
+        </p>
+    </div>
+    <div id="legend" style="position: sticky; bottom: 30px; left: 10px; background: white; padding: 10px; border: 1px solid black; z-index: 1000; font-size: 14px;">
+        <strong>Legend</strong>
+        <ul style="list-style: none; padding: 0; margin: 0;">
+            <li><span style="display: inline-block; width: 10px; height: 10px; background-color: blue; margin-right: 5px;"></span><a href="https://zh9567.github.io/bus_stop/mybas-johor.html">Causeway Link</a> (currently only available for myBAS Johor Bahru routes)</li>
+            <li><span style="display: inline-block; width: 10px; height: 10px; background-color: red; margin-right: 5px;"></span><a href="https://zh9567.github.io/bus_stop/rapid-bus-kl.html">Rapid KL</a></li>
+            <li><span style="display: inline-block; width: 10px; height: 10px; background-color: green; margin-right: 5px;"></span><a href="https://zh9567.github.io/bus_stop/rapid-bus-kuantan.html">Rapid Kuantan</a></li>
+            <li><span style="display: inline-block; width: 10px; height: 10px; background-color: brown; margin-right: 5px;"></span><a href="https://zh9567.github.io/bus_stop/rapid-bus-mrtfeeder.html">MRT Feeder Bus</a></li>
+            <li><span style="display: inline-block; width: 10px; height: 10px; background-color: purple; margin-right: 5px;"></span><a href="https://zh9567.github.io/bus_stop/rapid-bus-penang.html">Rapid Penang</a></li>
+        </ul>
+    </div>
+    <div id="map" style="width: 100%; height: 600px; position: absolute;"></div>
+
+    <script>
+        // Initialize the map
+        const map = L.map('map');
+
+        // Add OpenStreetMap tile layer
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        // Add button for user's location  
+        const locateButton = L.control({position: 'topright'});
+        locateButton.onAdd = function(map) {
+            const button = L.DomUtil.create('button', 'locate-button');
+            button.innerHTML = 'Show My Location';
+            button.style.backgroundColor = 'white';
+            button.style.padding = '10px';
+            button.style.cursor = 'pointer';
+            button.onclick = function() {
+                map.locate({setView: true, maxZoom: 16});
+            };
+            return button;
+        };
+        locateButton.addTo(map);
+
+        map.on('locationfound', (e) => {
+            L.circle(e.latlng, { radius: 50, color: 'blue', fillColor: 'blue', fillOpacity: 0.5 }).addTo(map)
+                .bindPopup('You are here').openPopup();
+        });
+
+        map.on('locationerror', () => {
+            alert('Unable to fetch your location');
+        });
+
+        // Color mapping for services
+        const serviceColors = {
+            'MyBas Johor': 'blue',
+            'Rapid Bus KL': 'red',
+            'Rapid Bus Kuantan': 'green',
+            'MRT Feeder': 'brown',
+            'Rapid Bus Penang': 'purple'
+        };
+
+        // URLs for GTFS zip files
+        const gtfsUrls = {
+            'MyBas Johor': 'https://api.data.gov.my/gtfs-static/mybas-johor',
+            'Rapid Bus KL': 'https://api.data.gov.my/gtfs-static/prasarana?category=rapid-bus-kl',
+            'Rapid Bus Kuantan': 'https://api.data.gov.my/gtfs-static/prasarana?category=rapid-bus-kuantan',
+            'MRT Feeder': 'https://api.data.gov.my/gtfs-static/prasarana?category=rapid-bus-mrtfeeder',
+            'Rapid Bus Penang': 'https://api.data.gov.my/gtfs-static/prasarana?category=rapid-bus-penang'
+        };
+
+        // Bounds to keep track of all stops
+        const bounds = L.latLngBounds();
+
+        // Function to fetch and process GTFS data
+        const fetchAndDisplayBusStops = async (service, url) => {
+            try {
+                const response = await fetch(url);
+                const blob = await response.blob();
+                const zip = await JSZip.loadAsync(blob);
+
+                const stopsFile = await zip.file("stops.txt").async("string");
+                const stops = Papa.parse(stopsFile, { header: true }).data;
+
+                stops.forEach(stop => {
+                    if (stop.stop_lat && stop.stop_lon) {
+                        const lat = parseFloat(stop.stop_lat);
+                        const lon = parseFloat(stop.stop_lon);
+
+                        bounds.extend([lat, lon]); // Extend bounds to include this stop
+
+                        L.circleMarker([lat, lon], {
+                            color: serviceColors[service],
+                            radius: 1
+                        }).addTo(map)
+                          .bindPopup(`<strong>${stop.stop_name}</strong><br>${stop.stop_desc || 'No description available.'}`);
+                    }
+                });
+
+            } catch (error) {
+                console.error(`Error fetching or processing GTFS data for ${service}:`, error);
+            }
+        };
+
+        // Fetch and display data for all services
+        Promise.all(Object.entries(gtfsUrls).map(([service, url]) => fetchAndDisplayBusStops(service, url)))
+            .then(() => {
+                // Fit map to bounds after all stops are added
+                map.fitBounds(bounds);
+            });
+    </script>
+    <div class="content">Source: <a href="https://developer.data.gov.my/realtime-api/gtfs-static" target="_blank">GTFS Static - data.gov.my</a></div>
+    <footer>
+        visit us on:<br>
+        <a href="https://linktr.ee/Zh9567" target="_blank">Linktree</a>
+        <a href="https://www.facebook.com/Zh9567/" target="_blank">Facebook</a>
+        <a href="https://www.instagram.com/zh9567.maps/" target="_blank">Instagram</a>
+        <a href="https://www.youtube.com/@Zh9567maps" target="_blank">YouTube</a>
+        <a href="https://www.xiaohongshu.com/user/profile/63442dc8000000001802de78" target="_blank">XHS (小红书)</a>
+        <p>© Zh9567 Mapping 2025</p>
+    </footer>
+</body>
+</html>
