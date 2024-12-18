@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earthquake Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://zh9567.github.io/styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-gesture-handling/dist/leaflet-gesture-handling.min.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        #map {
+            height: 100vh; /* Fullscreen map */
+            margin: 0;
+        }
+        .legend {
+            position: absolute;
+            bottom: 30px;
+            left: 10px;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+            line-height: 18px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        .legend .color-box {
+            width: 12px;
+            height: 12px;
+            display: inline-block;
+            margin-right: 8px;
+            border-radius: 2px;
+        }
+      </style>
+</head>
+<body>
+    <header>
+        <a href="https://zh9567.github.io/">
+            <img src="https://zh9567.github.io/zh9567mapping_logo.png" alt="Zh9567 Logo">
+            <h1>Zh9567 Mapping</h1>
+        </a>
+    </header>
+    <div class="content">
+        <h1>Earthquake Map</h1>
+        <p>
+            This is a map of earthquakes within the past year. Click an icon on the map to view details.
+        </p>
+    </div>
+    <div id="recent-earthquakes" style="padding: 10px; background: white; border-top: 1px solid #ccc;">
+        <h3>Recent Earthquakes (time in UTC+8)</h3>
+        <ul id="earthquake-list" style="list-style: none; padding: 0; margin: 0; font-size: 14px;"></ul>
+    </div>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        const apiUrl = 'https://api.data.gov.my/weather/warning/earthquake';
+
+        // Function to determine marker color based on earthquake age
+        function getColorByTime(datetime) {
+            const eventDate = new Date(datetime);
+            const currentDate = new Date();
+            const diffInMonths = (currentDate.getFullYear() - eventDate.getFullYear()) * 12 
+                                + currentDate.getMonth() - eventDate.getMonth();
+
+            if (diffInMonths < 1) {
+                return 'red'; // Less than 1 month ago
+            } else if (diffInMonths < 6) {
+                return 'yellow'; // 1-6 months ago
+            } else if (diffInMonths < 12) {
+                return 'orange'; // 6-12 months ago
+            } else {
+                return 'green'; // Over a year ago
+            }
+        }
+
+        // Fetch earthquake data
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                console.log('API Response:', data);
+
+                // Initialize the map
+                const map = L.map('map').setView([4, 100], 5);
+
+                // Add OpenStreetMap tiles
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
+
+                // Plot each earthquake as a circle marker
+                data.forEach(event => {
+                    const { 
+                        localdatetime, 
+                        location_original, 
+                        n_distancemas,
+                        n_distancerest,
+                        magdefault: magnitude, 
+                        magtypedefault,
+                        depth, 
+                        lat, 
+                        lon 
+                    } = event;
+
+                    const markerColor = getColorByTime(localdatetime);
+
+                    // Add a circle marker
+                    L.circleMarker([lat, lon], {
+                        radius: magnitude, // Scale marker by magnitude
+                        color: markerColor,
+                        fillColor: markerColor,
+                        fillOpacity: 0.5
+                    })
+                        .addTo(map)
+                        .bindPopup(`
+                            <strong>${location_original}</strong><br>
+                            <b>Time (UTC+8):</b> ${localdatetime}<br>
+                            <b>Distance from other locations:</b> ${n_distancerest}<br>
+                            <b>Distance from Malaysia:</b> ${n_distancemas}<br>
+                            <b>Magnitude:</b> ${magnitude} ${magtypedefault}<br>
+                            <b>Depth:</b> ${depth} km
+                        `);
+                });
+                // Add a legend to the map
+                const legend = L.control({ position: 'bottomright' });
+
+                legend.onAdd = function () {
+                    const div = L.DomUtil.create('div', 'legend');
+                    div.innerHTML = `
+                        <div><span class="color-box" style="background: red;"></span>Less than 1 month ago</div>
+                        <div><span class="color-box" style="background: orange;"></span>1-6 months ago</div>
+                        <div><span class="color-box" style="background: yellow;"></span>6-12 months ago</div>
+                        <div><span class="color-box" style="background: green;"></span>Over a year ago</div>
+                    `;
+                    return div;
+                };
+
+                legend.addTo(map);
+            })
+            .catch(error => {
+                console.error('Error fetching earthquake data:', error);
+                alert('Error fetching earthquake data.');
+            });
+    </script>
+    
+    <script>
+        function renderRecentEarthquakes(data) {
+            // Filter for earthquakes less than a month ago
+            const recentEarthquakes = data.filter(event => {
+                const eventDate = new Date(event.localdatetime);
+                const currentDate = new Date();
+                const diffInMonths = (currentDate.getFullYear() - eventDate.getFullYear()) * 12 
+                                    + currentDate.getMonth() - eventDate.getMonth();
+                return diffInMonths < 1; // Less than one month
+            });
+    
+            // Sort by date in descending order (most recent first)
+            recentEarthquakes.sort((a, b) => new Date(b.localdatetime) - new Date(a.localdatetime));
+    
+            const earthquakeList = document.getElementById('earthquake-list');
+            earthquakeList.innerHTML = ''; // Clear previous content
+    
+            if (recentEarthquakes.length === 0) {
+                earthquakeList.innerHTML = '<li>No recent earthquakes in the last month.</li>';
+            } else {
+                recentEarthquakes.forEach(event => {
+                    const { localdatetime, location_original, magdefault: magnitude, magtypedefault, depth, lat, lon } = event;
+                    const listItem = document.createElement('li');
+                    listItem.style.marginBottom = '8px';
+                    listItem.innerHTML = `
+                        <strong>${location_original}</strong><br>
+                        Magnitude: ${magnitude}  ${magtypedefault} | Depth: ${depth} km | Time: ${localdatetime} | Coordinates:  ${lat},  ${lon}
+                    `;
+                    earthquakeList.appendChild(listItem);
+                });
+            }
+        }
+    
+        // Fetch earthquake data and render recent earthquakes
+        fetch(apiUrl)
+            .then(response => response.json())
+            .then(data => {
+                renderRecentEarthquakes(data); // Call function to render the list
+            })
+            .catch(error => {
+                console.error('Error fetching earthquake data:', error);
+                document.getElementById('earthquake-list').innerHTML = '<li>Error loading data.</li>';
+            });
+    </script>
+    <div class="content">Source: <a href="https://developer.data.gov.my/realtime-api/weather" target="_blank">Weather API - data.gov.my</a></div>
+    <footer>
+        visit us on:<br>
+        <a href="https://linktr.ee/Zh9567" target="_blank">Linktree</a>
+        <a href="https://www.facebook.com/Zh9567/" target="_blank">Facebook</a>
+        <a href="https://www.instagram.com/zh9567.maps/" target="_blank">Instagram</a>
+        <a href="https://www.youtube.com/@Zh9567maps" target="_blank">YouTube</a>
+        <a href="https://www.xiaohongshu.com/user/profile/63442dc8000000001802de78" target="_blank">XHS (小红书)</a>
+        <p>© Zh9567 Mapping 2025</p>
+    </footer>
+</body>
+</html>
