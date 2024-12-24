@@ -38,7 +38,7 @@
     <script src="https://unpkg.com/leaflet-gesture-handling"></script>
     <script>
         // Initialize the map
-        const map = L.map('map');
+        const map = L.map('map',{gestureHandling: true});
 
         // Add OpenStreetMap tile layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
