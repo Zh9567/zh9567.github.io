@@ -32,16 +32,40 @@
             attribution: '© OpenStreetMap contributors'
         }).addTo(map);
 
+        // Add button for user's location
+        const locateButton = L.control({position: 'topright'});
+        locateButton.onAdd = function(map) {
+            const button = L.DomUtil.create('button', 'locate-button');
+            button.innerHTML = 'Show My Location';
+            button.style.backgroundColor = 'white';
+            button.style.padding = '10px';
+            button.style.cursor = 'pointer';
+            button.onclick = function() {
+                map.locate({setView: true, maxZoom: 16});
+            };
+            return button;
+        };
+        locateButton.addTo(map);
+
+        map.on('locationfound', (e) => {
+            L.circle(e.latlng, { radius: 50, color: 'blue', fillColor: 'blue', fillOpacity: 0.5 }).addTo(map)
+                .bindPopup('You are here').openPopup();
+        });
+
+        map.on('locationerror', () => {
+            alert('Unable to fetch your location');
+        });
+
         // Layer to hold vehicle markers
         const vehicleLayer = L.layerGroup().addTo(map);
 
         // Define category-to-color mapping
         const categoryColors = {
-            "rapid-bus-kl": "blue",
-            "rapid-bus-mrtfeeder": "green",
-            "rapid-bus-penang": "red",
-            "rapid-bus-kuantan": "orange",
-            "mybas-johor": "purple"
+            "rapid-bus-kl": "red",
+            "rapid-bus-mrtfeeder": "brown",
+            "rapid-bus-penang": "purple",
+            "rapid-bus-kuantan": "green",
+            "mybas-johor": "blue"
         };
 
         // Add manually set legend
@@ -50,11 +74,11 @@
             const div = L.DomUtil.create("div", "legend");
             div.innerHTML = `
                 <strong>Bus Categories</strong><br>
-                <i style="background:blue; width: 12px; height: 12px; display: inline-block; margin-right: 8px;"></i> Rapid KL<br>
-                <i style="background:green; width: 12px; height: 12px; display: inline-block; margin-right: 8px;"></i> MRT Feeder<br>
-                <i style="background:red; width: 12px; height: 12px; display: inline-block; margin-right: 8px;"></i> Rapid Penang<br>
-                <i style="background:orange; width: 12px; height: 12px; display: inline-block; margin-right: 8px;"></i> Rapid Kuantan<br>
-                <i style="background:purple; width: 12px; height: 12px; display: inline-block; margin-right: 8px;"></i> MyBas Johor<br>
+                <i style="background:red; width: 12px; height: 12px; display: inline-block; margin-right: 8px;"></i> Rapid KL<br>
+                <i style="background:brown; width: 12px; height: 12px; display: inline-block; margin-right: 8px;"></i> MRT Feeder Bus<br>
+                <i style="background:purple; width: 12px; height: 12px; display: inline-block; margin-right: 8px;"></i> Rapid Penang<br>
+                <i style="background:green; width: 12px; height: 12px; display: inline-block; margin-right: 8px;"></i> Rapid Kuantan<br>
+                <i style="background:blue; width: 12px; height: 12px; display: inline-block; margin-right: 8px;"></i> Causeway Link<br>
             `;
             return div;
         };
