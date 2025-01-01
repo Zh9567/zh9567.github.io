@@ -62,8 +62,10 @@
             const currentDate = new Date();
             const diffInMonths = (currentDate.getFullYear() - eventDate.getFullYear()) * 12 
                                 + currentDate.getMonth() - eventDate.getMonth();
+            const diffInTime = currentDate - eventDate; // Difference in milliseconds
+            const diffInDays = diffInTime / (1000 * 60 * 60 * 24); // Convert to days
 
-            if (diffInMonths < 1) {
+            if (diffInDays < 30) {
                 return 'red'; // Less than 1 month ago
             } else if (diffInMonths < 6) {
                 return 'orange'; // 1-6 months ago
@@ -145,23 +147,23 @@
     
     <script>
         function renderRecentEarthquakes(data) {
-            // Filter for earthquakes less than a month ago
+            // Filter for earthquakes less than or equal to 30 days ago
             const recentEarthquakes = data.filter(event => {
                 const eventDate = new Date(event.localdatetime);
                 const currentDate = new Date();
-                const diffInMonths = (currentDate.getFullYear() - eventDate.getFullYear()) * 12 
-                                    + currentDate.getMonth() - eventDate.getMonth();
-                return diffInMonths < 1; // Less than one month
+                const diffInTime = currentDate - eventDate; // Difference in milliseconds
+                const diffInDays = diffInTime / (1000 * 60 * 60 * 24); // Convert to days
+                return diffInDays <= 30; // 30 days or less
             });
-    
+
             // Sort by date in descending order (most recent first)
             recentEarthquakes.sort((a, b) => new Date(b.localdatetime) - new Date(a.localdatetime));
-    
+
             const earthquakeList = document.getElementById('earthquake-list');
             earthquakeList.innerHTML = ''; // Clear previous content
-    
+
             if (recentEarthquakes.length === 0) {
-                earthquakeList.innerHTML = '<li>No recent earthquakes in the last month.</li>';
+                earthquakeList.innerHTML = '<li>No recent earthquakes in the last 30 days.</li>';
             } else {
                 recentEarthquakes.forEach(event => {
                     const { localdatetime, location_original, magdefault: magnitude, magtypedefault, depth, lat, lon } = event;
@@ -169,13 +171,13 @@
                     listItem.style.marginBottom = '8px';
                     listItem.innerHTML = `
                         <strong>${location_original}</strong><br>
-                        Magnitude: ${magnitude}  ${magtypedefault} | Depth: ${depth} km | Time: ${localdatetime} | Coordinates:  ${lat},  ${lon}
+                        Magnitude: ${magnitude} ${magtypedefault} | Depth: ${depth} km | Time: ${localdatetime} | Coordinates: ${lat}, ${lon}
                     `;
                     earthquakeList.appendChild(listItem);
                 });
             }
         }
-    
+
         // Fetch earthquake data and render recent earthquakes
         fetch(apiUrl)
             .then(response => response.json())
