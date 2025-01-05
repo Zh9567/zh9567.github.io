@@ -13,9 +13,6 @@
             margin: 0;
         }
         .legend {
-            position: absolute;
-            top: 10px;
-            right: 10px;
             background: white;
             padding: 10px;
             border-radius: 5px;
@@ -83,7 +80,11 @@
                 console.log('API Response:', data);
 
                 // Initialize the map
-                const map = L.map('map',{gestureHandling: true}).setView([4.12, 109.46], 5);
+                const map = L.map('map', { 
+                    gestureHandling: true, 
+                    worldCopyJump: true,  // Enables wrapping of the map
+                    continuousWorld: false // Prevents rendering issues at 180° longitude
+                }).setView([4.12, 109.46], 5);
 
                 // Add OpenStreetMap tiles
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
