@@ -13,6 +13,11 @@ URLS = {
     "rapid-bus-penang": "https://api.data.gov.my/gtfs-realtime/vehicle-position/prasarana?category=rapid-bus-penang",
     "rapid-bus-kuantan": "https://api.data.gov.my/gtfs-realtime/vehicle-position/prasarana?category=rapid-bus-kuantan",
     "mybas-johor": "https://api.data.gov.my/gtfs-realtime/vehicle-position/mybas-johor",
+    "mybas-kangar": "https://api.data.gov.my/gtfs-realtime/vehicle-position/mybas-kangar",
+    "mybas-alor-setar": "https://api.data.gov.my/gtfs-realtime/vehicle-position/mybas-alor-setar",
+    "mybas-kuala-terengganu": "https://api.data.gov.my/gtfs-realtime/vehicle-position/mybas-kuala-terengganu",
+    "mybas-kota-bharu": "https://api.data.gov.my/gtfs-realtime/vehicle-position/mybas-kota-bharu",
+    "mybas-kuching": "https://api.data.gov.my/gtfs-realtime/vehicle-position/mybas-kuching",
 }
 
 @app.route('/vehicles', methods=['GET'])
