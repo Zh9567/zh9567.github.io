@@ -29,7 +29,7 @@
                     <li><span style="display: inline-block; width: 10px; height: 10px; background-color: brown; margin-right: 5px;"></span><a href="https://zh9567.github.io/bus_stop/rapid-bus-mrtfeeder.html">MRT Feeder Bus</a></li>
                     <li><span style="display: inline-block; width: 10px; height: 10px; background-color: purple; margin-right: 5px;"></span><a href="https://zh9567.github.io/bus_stop/rapid-bus-penang.html">Rapid Penang</a></li>
                     <li><span style="display: inline-block; width: 10px; height: 10px; background-color: green; margin-right: 5px;"></span><a href="https://zh9567.github.io/bus_stop/rapid-bus-kuantan.html">Rapid Kuantan</a></li>
-                    <li><span style="display: inline-block; width: 10px; height: 10px; background-color: blue; margin-right: 5px;"></span><a href="https://zh9567.github.io/bus_stop/mybas-johor.html">Causeway Link</a> (currently only available for myBAS Johor Bahru routes)</li>
+                    <li><span style="display: inline-block; width: 10px; height: 10px; background-color: hotpink; margin-right: 5px;"></span><a href="https://zh9567.github.io/bus_stop/mybas-johor.html">BAS.MY Johor Bahru</a></li>
                 </ul>
         </p>
     </div>
@@ -72,7 +72,12 @@
 
         // Color mapping for services
         const serviceColors = {
-            'MyBas Johor': 'blue',
+            'MyBas Johor': 'hotpink',
+            'MyBas Kangar': 'hotpink',
+            'MyBas Alor Setar': 'hotpink',
+            'MyBas Kuala Terengganu': 'hotpink',
+            'MyBas Kota Bharu': 'hotpink',
+            'MyBas Kuching': 'hotpink',
             'Rapid Bus KL': 'red',
             'Rapid Bus Kuantan': 'green',
             'MRT Feeder': 'brown',
@@ -82,6 +87,11 @@
         // URLs for GTFS zip files
         const gtfsUrls = {
             'MyBas Johor': 'https://api.data.gov.my/gtfs-static/mybas-johor',
+            'MyBas Kangar': 'https://api.data.gov.my/gtfs-static/mybas-kangar',
+            'MyBas Alor Setar': 'https://api.data.gov.my/gtfs-static/mybas-alor-setar',
+            'MyBas Kuala Terengganu': 'https://api.data.gov.my/gtfs-static/mybas-kuala-terengganu',
+            'MyBas Kota Bharu': 'https://api.data.gov.my/gtfs-static/mybas-kota-bharu',
+            'MyBas Kuching': 'https://api.data.gov.my/gtfs-static/mybas-kuching',
             'Rapid Bus KL': 'https://api.data.gov.my/gtfs-static/prasarana?category=rapid-bus-kl',
             'Rapid Bus Kuantan': 'https://api.data.gov.my/gtfs-static/prasarana?category=rapid-bus-kuantan',
             'MRT Feeder': 'https://api.data.gov.my/gtfs-static/prasarana?category=rapid-bus-mrtfeeder',
