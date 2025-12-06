@@ -29,7 +29,7 @@
                     <li><span style="display: inline-block; width: 10px; height: 10px; background-color: brown; margin-right: 5px;"></span><a href="https://zh9567.github.io/bus_stop/rapid-bus-mrtfeeder.html">MRT Feeder Bus</a></li>
                     <li><span style="display: inline-block; width: 10px; height: 10px; background-color: purple; margin-right: 5px;"></span><a href="https://zh9567.github.io/bus_stop/rapid-bus-penang.html">Rapid Penang</a></li>
                     <li><span style="display: inline-block; width: 10px; height: 10px; background-color: green; margin-right: 5px;"></span><a href="https://zh9567.github.io/bus_stop/rapid-bus-kuantan.html">Rapid Kuantan</a></li>
-                    <li><span style="display: inline-block; width: 10px; height: 10px; background-color: hotpink; margin-right: 5px;"></span><a href="https://zh9567.github.io/bus_stop/mybas-johor.html">BAS.MY Johor Bahru</a></li>
+                    <li><span style="display: inline-block; width: 10px; height: 10px; background-color: hotpink; margin-right: 5px;"></span>BAS.MY - <a href="https://zh9567.github.io/bus_stop/mybas-johor.html">Johor Bahru</a>, <a href="https://zh9567.github.io/bus_stop/mybas-melaka.html">Melaka</a>, <a href="https://zh9567.github.io/bus_stop/mybas-seremban.html">Seremban</a>, <a href="https://zh9567.github.io/bus_stop/mybas-ipoh.html">Ipoh</a>, <a href="https://zh9567.github.io/bus_stop/mybas-alor-setar.html">Alor Setar</a>, <a href="https://zh9567.github.io/bus_stop/mybas-kangar.html">Kangar</a>, <a href="https://zh9567.github.io/bus_stop/mybas-kota-bharu.html">Kota Bharu</a>, <a href="https://zh9567.github.io/bus_stop/mybas-kuala-terengganu.html">Kuala Terengganu</a>, <a href="https://zh9567.github.io/bus_stop/mybas-kuching.html">Kuching</a></li>
                 </ul>
         </p>
     </div>
@@ -38,7 +38,7 @@
     <script src="https://unpkg.com/leaflet-gesture-handling"></script>
     <script>
         // Initialize the map
-        const map = L.map('map',{gestureHandling: true});
+        const map = L.map('map',{gestureHandling: true}).setView([4.10932, 109.455475], 6);
 
         // Add OpenStreetMap tile layer
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -79,6 +79,9 @@
             'MyBas Kota Bharu': 'hotpink',
             'MyBas Kuching': 'hotpink',
             'MyBas Melaka': 'hotpink',
+            'MyBas Ipoh': 'hotpink',
+            'MyBas Seremban A': 'hotpink',
+            'MyBas Seremban B': 'hotpink',
             'Rapid Bus KL': 'red',
             'Rapid Bus Kuantan': 'green',
             'MRT Feeder': 'brown',
@@ -94,6 +97,9 @@
             'MyBas Kota Bharu': 'https://api.data.gov.my/gtfs-static/mybas-kota-bharu',
             'MyBas Kuching': 'https://api.data.gov.my/gtfs-static/mybas-kuching',
             'MyBas Melaka': 'https://api.data.gov.my/gtfs-static/mybas-melaka',
+            'MyBas Ipoh': 'https://api.data.gov.my/gtfs-static/mybas-ipoh',
+            'MyBas Seremban A': 'https://api.data.gov.my/gtfs-static/mybas-seremban-a',
+            'MyBas Seremban B': 'https://api.data.gov.my/gtfs-static/mybas-seremban-b',
             'Rapid Bus KL': 'https://api.data.gov.my/gtfs-static/prasarana?category=rapid-bus-kl',
             'Rapid Bus Kuantan': 'https://api.data.gov.my/gtfs-static/prasarana?category=rapid-bus-kuantan',
             'MRT Feeder': 'https://api.data.gov.my/gtfs-static/prasarana?category=rapid-bus-mrtfeeder',
@@ -135,10 +141,6 @@
 
         // Fetch and display data for all services
         Promise.all(Object.entries(gtfsUrls).map(([service, url]) => fetchAndDisplayBusStops(service, url)))
-            .then(() => {
-                // Fit map to bounds after all stops are added
-                map.fitBounds(bounds);
-            });
     </script>
     <div class="content">Source: <a href="https://developer.data.gov.my/realtime-api/gtfs-static" target="_blank">GTFS Static - data.gov.my</a></div>
     <footer>
